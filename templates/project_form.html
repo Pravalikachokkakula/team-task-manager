@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 bg-white">
+                <h6 class="m-0 font-weight-bold text-primary">{{ 'Edit Project' if project else 'Create New Project' }}</h6>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('projects.edit_project', project_id=project.id) if project else url_for('projects.create_project') }}">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Project Name</label>
+                        <input type="text" class="form-control" id="name" name="name" value="{{ project.name if project else '' }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3">{{ project.description if project else '' }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="members" class="form-label">Assign Members</label>
+                        <select multiple class="form-select" id="members" name="members" style="height: 150px;">
+                            {% for user in users %}
+                            <option value="{{ user.id }}" {% if project and user in project.members %}selected{% endif %}>{{ user.username }} ({{ user.role }})</option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text">Hold Ctrl (Windows) or Cmd (Mac) to select multiple members.</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i> {{ 'Save Changes' if project else 'Create Project' }}</button>
+                    <a href="{{ url_for('projects.list_projects') }}" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

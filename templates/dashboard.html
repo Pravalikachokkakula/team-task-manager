@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+</div>
+
+<div class="row">
+    <!-- Total Tasks -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total }}</div>
+                <div class="text-xs text-primary">Total Tasks</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Completed -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ completed }}</div>
+                <div class="text-xs text-success">Completed</div>
+                <div class="progress mt-2">
+                    <div class="progress-bar bg-success" style="width: {{ progress }}%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ pending }}</div>
+                <div class="text-xs text-warning">Pending / In Progress</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overdue -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-danger shadow h-100 py-2">
+            <div class="card-body">
+                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ overdue }}</div>
+                <div class="text-xs text-danger">Overdue</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header">
+        <h6 class="m-0 font-weight-bold text-primary">Recent Tasks</h6>
+    </div>
+
+    <div class="card-body">
+        {% if recent_tasks %}
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Task</th>
+                        <th>Project</th>
+                        <th>Status</th>
+                        <th>Due Date</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for task in recent_tasks %}
+                    <tr {% if task.due_date < today and task.status !='Completed' %}style="background:#ffe6e6;" {% endif
+                        %}>
+
+                        <td>{{ task.title }}</td>
+                        <td>{{ task.project.name }}</td>
+
+                        <td>
+                            {% if task.status == 'Completed' %}
+                            <span class="badge bg-success">Completed</span>
+                            {% elif task.status == 'In Progress' %}
+                            <span class="badge bg-warning text-dark">In Progress</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Pending</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {{ task.due_date.strftime('%Y-%m-%d') }}
+                            {% if task.due_date < today and task.status !='Completed' %} <span style="color:red;">
+                                (Overdue)</span>
+                                {% endif %}
+                        </td>
+
+                    </tr>
+                    {% endfor %} <!-- ✅ FIXED HERE -->
+                </tbody>
+            </table>
+        </div>
+
+        <a href="{{ url_for('tasks.list_tasks') }}" class="btn btn-primary mt-3">View All Tasks</a>
+
+        {% else %}
+        <p>No tasks available</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

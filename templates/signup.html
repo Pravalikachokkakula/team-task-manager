@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="card shadow-lg border-0 rounded-lg">
+            <div class="card-header bg-success text-white text-center py-4">
+                <h3 class="font-weight-light my-2">Create Account</h3>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('auth.signup') }}">
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="inputUsername" type="text" name="username" placeholder="johndoe" required />
+                        <label for="inputUsername">Username</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="inputEmail" type="email" name="email" placeholder="name@example.com" required />
+                        <label for="inputEmail">Email address</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input class="form-control" id="inputPassword" type="password" name="password" placeholder="Password" required />
+                        <label for="inputPassword">Password</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <select class="form-select" id="roleSelect" name="role">
+                            <option value="Member">Member</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                        <label for="roleSelect">Account Role</label>
+                    </div>
+                    <div class="mt-4 mb-0">
+                        <button class="btn btn-success w-100 py-2" type="submit">Create Account</button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center py-3">
+                <div class="small"><a href="{{ url_for('auth.login') }}">Have an account? Go to login</a></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

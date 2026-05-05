@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Kanban Board</h1>
+    <div>
+        <a href="{{ url_for('tasks.list_tasks') }}" class="d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm">
+            <i class="fas fa-list fa-sm text-white-50"></i> List View
+        </a>
+        {% if g.user.role == 'Admin' %}
+        <a href="{{ url_for('tasks.create_task') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm ms-2">
+            <i class="fas fa-plus fa-sm text-white-50"></i> Create Task
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <!-- Pending Column -->
+    <div class="col-lg-4 mb-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 bg-secondary">
+                <h6 class="m-0 font-weight-bold text-white">Pending ({{ pending_tasks|length }})</h6>
+            </div>
+            <div class="card-body" style="min-height: 500px; background-color: var(--bs-tertiary-bg);">
+                {% for task in pending_tasks %}
+                <div class="card mb-3 border-left-secondary shadow-sm">
+                    <div class="card-body p-3">
+                        <h6 class="font-weight-bold">{{ task.title }}</h6>
+                        <p class="small text-muted mb-2">{{ task.project.name }}</p>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="small badge bg-secondary">{{ task.assignee.username if task.assignee else 'Unassigned' }}</span>
+                            <span class="small {% if task.due_date < today %}text-danger font-weight-bold{% else %}text-muted{% endif %}">
+                                <i class="fas fa-calendar-alt"></i> {{ task.due_date.strftime('%Y-%m-%d') }}
+                            </span>
+                        </div>
+                        <form method="POST" action="{{ url_for('tasks.update_task_status', task_id=task.id) }}">
+                            <input type="hidden" name="status" value="In Progress">
+                            <button type="submit" class="btn btn-sm btn-outline-warning w-100 mt-2">Start Progress</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- In Progress Column -->
+    <div class="col-lg-4 mb-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 bg-warning">
+                <h6 class="m-0 font-weight-bold text-dark">In Progress ({{ in_progress_tasks|length }})</h6>
+            </div>
+            <div class="card-body" style="min-height: 500px; background-color: var(--bs-tertiary-bg);">
+                {% for task in in_progress_tasks %}
+                <div class="card mb-3 border-left-warning shadow-sm">
+                    <div class="card-body p-3">
+                        <h6 class="font-weight-bold">{{ task.title }}</h6>
+                        <p class="small text-muted mb-2">{{ task.project.name }}</p>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="small badge bg-warning text-dark">{{ task.assignee.username if task.assignee else 'Unassigned' }}</span>
+                            <span class="small {% if task.due_date < today %}text-danger font-weight-bold{% else %}text-muted{% endif %}">
+                                <i class="fas fa-calendar-alt"></i> {{ task.due_date.strftime('%Y-%m-%d') }}
+                            </span>
+                        </div>
+                        <form method="POST" action="{{ url_for('tasks.update_task_status', task_id=task.id) }}">
+                            <input type="hidden" name="status" value="Completed">
+                            <button type="submit" class="btn btn-sm btn-outline-success w-100 mt-2">Mark Completed</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Completed Column -->
+    <div class="col-lg-4 mb-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 bg-success">
+                <h6 class="m-0 font-weight-bold text-white">Completed ({{ completed_tasks|length }})</h6>
+            </div>
+            <div class="card-body" style="min-height: 500px; background-color: var(--bs-tertiary-bg);">
+                {% for task in completed_tasks %}
+                <div class="card mb-3 border-left-success shadow-sm opacity-75">
+                    <div class="card-body p-3">
+                        <h6 class="font-weight-bold text-decoration-line-through">{{ task.title }}</h6>
+                        <p class="small text-muted mb-2">{{ task.project.name }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="small badge bg-success">{{ task.assignee.username if task.assignee else 'Unassigned' }}</span>
+                            <span class="small text-muted">
+                                <i class="fas fa-check-circle"></i> Done
+                            </span>
+                        </div>
+                        <form method="POST" action="{{ url_for('tasks.update_task_status', task_id=task.id) }}">
+                            <input type="hidden" name="status" value="In Progress">
+                            <button type="submit" class="btn btn-sm btn-outline-secondary w-100 mt-2">Revert to In Progress</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
