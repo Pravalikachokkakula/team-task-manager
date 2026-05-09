@@ -2,6 +2,7 @@ flask
 flask-sqlalchemy
 flask-bcrypt
 gunicorn
+psycopg2
 psycopg2-binary
 python-dotenv
 flask-jwt-extended
